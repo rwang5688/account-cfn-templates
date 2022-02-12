@@ -1,10 +1,47 @@
+Description:  This template creates a SSO assignment in the AWS SSO domain (instance).
+
+Parameters:
+  InstanceArn:
+    AllowedPattern: 'arn:(aws|aws-us-gov|aws-cn|aws-iso|aws-iso-b):sso:::instance/(sso)?ins-[a-zA-Z0-9-.]{16}'
+    ConstraintDescription: The ARN of the SSO instance under which the operation will be executed.
+    Description: The ARN of the SSO instance under which the operation will be executed.
+    Type: String
+
+  AccountId:
+    AllowedPattern: '\d{12}'
+    ConstraintDescription: TargetID is an AWS account identifier, typically a 10-12 digit string (For example, 123456789012).
+    Description: TargetID is an AWS account identifier, typically a 10-12 digit string (For example, 123456789012).
+    Type: String
+
+  PrincipalId:
+    AllowedPattern: '^([0-9a-f]{10}-|)[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$'
+    ConstraintDescription: An identifier for an object in AWS SSO, such as a user or group. PrincipalIds are GUIDs (For example, f81d4fae-7dec-11d0-a765-00a0c91e6bf6).
+    Description: An identifier for an object in AWS SSO, such as a user or group. PrincipalIds are GUIDs (For example, f81d4fae-7dec-11d0-a765-00a0c91e6bf6).
+    Type: String
+
+  PrincipalType:
+    AllowedValues:
+      - 'GROUP'
+      - 'USER'
+    ConstraintDescription: The entity type for which the assignment will be created.
+    Description: The entity type for which the assignment will be created.
+    Type: String
+    Default: 'GROUP'
+
+  PermissionSetArn:
+    AllowedPattern: 'arn:(aws|aws-us-gov|aws-cn|aws-iso|aws-iso-b):sso:::permissionSet/(sso)?ins-[a-zA-Z0-9-.]{16}/ps-[a-zA-Z0-9-./]{16}'
+    ConstraintDescription: The ARN of the permission set for which the assignment will be created.
+    Description: The ARN of the permmission set for which the assignment will be created.
+    Type: String
+
 Resources:
   Assignment:
     Type: AWS::SSO::Assignment
     Properties:
-      InstanceArn: 'arn:aws:sso:::instance/ssoins-instanceId'
-      PermissionSetArn: !GetAtt PermissionSet.PermissionSetArn
-      TargetId: 'accountId'
+      InstanceArn: !Ref InstanceArn
+      PermissionSetArn: !Ref PermissionSetArn
+      TargetId: !Ref AccountId
       TargetType: 'AWS_ACCOUNT'
-      PrincipalType: 'USER'
-      PrincipalId: 'user_id'
+      PrincipalId: !Ref PrincipalId
+      PrincipalType: !Ref PrincipalType
+      
