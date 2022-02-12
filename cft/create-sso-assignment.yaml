@@ -1,0 +1,10 @@
+Resources:
+  Assignment:
+    Type: AWS::SSO::Assignment
+    Properties:
+      InstanceArn: 'arn:aws:sso:::instance/ssoins-instanceId'
+      PermissionSetArn: !GetAtt PermissionSet.PermissionSetArn
+      TargetId: 'accountId'
+      TargetType: 'AWS_ACCOUNT'
+      PrincipalType: 'USER'
+      PrincipalId: 'user_id'
