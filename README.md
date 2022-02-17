@@ -1,2 +1,2 @@
-# account-cfn-templates
-Account CloudFormation Templates
+# account-setup-cfn-templates
+Account Setup CloudFormation Templates
