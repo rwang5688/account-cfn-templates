@@ -261,6 +261,19 @@ Resources:
        RuleAction: allow
        CidrBlock: 0.0.0.0/0
 
+  InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp:
+            Ref: SshCidr
+      VpcId:
+        Ref: VpcId
+
 Outputs:
   VPC:
     Description: A reference to the created VPC
@@ -293,6 +306,10 @@ Outputs:
   NACL:
     Description: A reference to the NACL
     Value: !Ref MyNACL
+
+  SecurityGroupId:
+    Description: Security group id
+    Value: Fn::GetAtt: [ InstanceSecurityGroup, GroupId ]
 
   S3GatewayEndpoint:
     Description: A reference to the S3 Gateway VPC Endpoint
