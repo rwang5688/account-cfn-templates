@@ -118,32 +118,6 @@ Resources:
        - Key: Name
          Value: !Sub ${EnvironmentName} NACL
 
-  InboundRuleForHTTP:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-       NetworkAclId:
-         Ref: NACL
-       RuleNumber: 100
-       Protocol: 6
-       RuleAction: allow
-       CidrBlock: 0.0.0.0/0
-       PortRange:
-         From: 80
-         To: 80
-
-  InboundRuleForHTTPS:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-       NetworkAclId:
-         Ref: NACL
-       RuleNumber: 110
-       Protocol: 6
-       RuleAction: allow
-       CidrBlock: 0.0.0.0/0
-       PortRange:
-         From: 443
-         To: 443
-
   InboundRuleForSSH:
     Type: AWS::EC2::NetworkAclEntry
     Properties:
@@ -182,34 +156,6 @@ Resources:
        PortRange:
          From: 1024
          To: 65535
-
-  OutboundRuleForHTTP:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-       NetworkAclId:
-         Ref: NACL
-       RuleNumber: 100
-       Protocol: 6
-       Egress: true
-       RuleAction: allow
-       CidrBlock: 0.0.0.0/0
-       PortRange:
-         From: 80
-         To: 80
-
-  OutboundRuleForHTTPS:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-       NetworkAclId:
-         Ref: NACL
-       RuleNumber: 110
-       Protocol: 6
-       Egress: true
-       RuleAction: allow
-       CidrBlock: 0.0.0.0/0
-       PortRange:
-         From: 443
-         To: 443
 
   OutboundRuleForSSH:
     Type: AWS::EC2::NetworkAclEntry
@@ -273,30 +219,6 @@ Resources:
         Fn::GetAtt:
           - InstanceSG
           - GroupId
-      GroupId:
-        Fn::GetAtt:
-          - InstanceSG
-          - GroupId
-
-  IngressRuleForHTTP:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      IpProtocol: tcp
-      FromPort: 80
-      ToPort: 80
-      CidrIp: 0.0.0.0/0
-      GroupId:
-        Fn::GetAtt:
-          - InstanceSG
-          - GroupId
-
-  IngressRuleForHTTPS:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      IpProtocol: tcp
-      FromPort: 443
-      ToPort: 443
-      CidrIp: 0.0.0.0/0
       GroupId:
         Fn::GetAtt:
           - InstanceSG
