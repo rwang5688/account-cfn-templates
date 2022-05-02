@@ -49,26 +49,6 @@ Resources:
             Resource:
               - !Sub 'arn:aws:s3:::${S3Bucket}'
               - !Sub 'arn:aws:s3:::${S3Bucket}/*'
-          - Sid: DenyIncorrectEncryptionHeader
-            Action:
-              - s3:PutObject
-            Condition:
-              StringNotEquals:
-                's3:x-amz-server-side-encryption': 'AES256'
-            Effect: Deny
-            Principal: '*'
-            Resource:
-              - !Sub 'arn:aws:s3:::${S3Bucket}/*'
-          - Sid: DenyUnencryptedObjectUploads
-            Action:
-              - s3:PutObject
-            Condition:
-              'Null':
-                's3:x-amz-server-side-encryption': 'true'
-            Effect: Deny
-            Principal: '*'
-            Resource:
-              - !Sub 'arn:aws:s3:::${S3Bucket}/*'
 
 Outputs:
   S3BucketName:
