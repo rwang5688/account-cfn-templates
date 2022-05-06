@@ -276,19 +276,6 @@ Resources:
          From: 22
          To: 22
 
-  InboundRuleForPING:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-       NetworkAclId:
-         Ref: NACL
-       RuleNumber: 130
-       Protocol: 1
-       RuleAction: allow
-       CidrBlock: 0.0.0.0/0
-       Icmp:
-         Code: -1
-         Type: -1
-
   InboundRuleForEphemeralPorts:
     Type: AWS::EC2::NetworkAclEntry
     Properties:
@@ -301,6 +288,19 @@ Resources:
        PortRange:
          From: 1024
          To: 65535
+
+  InboundRuleForPING:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+       NetworkAclId:
+         Ref: NACL
+       RuleNumber: 150
+       Protocol: 1
+       RuleAction: allow
+       CidrBlock: 0.0.0.0/0
+       Icmp:
+         Code: -1
+         Type: -1
 
   OutboundRuleForHTTP:
     Type: AWS::EC2::NetworkAclEntry
@@ -344,20 +344,6 @@ Resources:
          From: 1024
          To: 65535
 
-  OutboundRuleForPING:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-       NetworkAclId:
-         Ref: NACL
-       RuleNumber: 130
-       Protocol: 1
-       Egress: true
-       RuleAction: allow
-       CidrBlock: 0.0.0.0/0
-       Icmp:
-         Code: -1
-         Type: -1
-
   OutboundRuleForEphemeralPorts:
     Type: AWS::EC2::NetworkAclEntry
     Properties:
@@ -371,6 +357,44 @@ Resources:
        PortRange:
          From: 1024
          To: 65535
+
+  OutboundRuleForPING:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+       NetworkAclId:
+         Ref: NACL
+       RuleNumber: 150
+       Protocol: 1
+       Egress: true
+       RuleAction: allow
+       CidrBlock: 0.0.0.0/0
+       Icmp:
+         Code: -1
+         Type: -1
+
+  PublicSubnet1NaclAssociation:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref NACL
+      SubnetId: !Ref PublicSubnet1
+
+  PublicSubnet2NaclAssociation:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref NACL
+      SubnetId: !Ref PublicSubnet2
+
+  PrivateSubnet1NaclAssociation:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref NACL
+      SubnetId: !Ref PrivateSubnet1
+
+  PrivateSubnet2NaclAssociation:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref NACL
+      SubnetId: !Ref PrivateSubnet2
 
   InstanceSG:
     Type: 'AWS::EC2::SecurityGroup'
