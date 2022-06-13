@@ -276,6 +276,18 @@ Resources:
           - InstanceSG
           - GroupId
 
+  IngressRuleForEphemeralPorts:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 1024
+      ToPort: 65535
+      CidrIp: 0.0.0.0/0
+      GroupId:
+        Fn::GetAtt:
+          - InstanceSG
+          - GroupId
+
   IngressRuleForPING:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
