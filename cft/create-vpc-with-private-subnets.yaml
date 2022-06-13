@@ -204,7 +204,7 @@ Resources:
        RuleNumber: 120
        Protocol: 6
        RuleAction: allow
-       CidrBlock: !Ref SshCidr
+       CidrBlock: 0.0.0.0/0
        PortRange:
          From: 22
          To: 22
@@ -258,7 +258,7 @@ Resources:
        Protocol: 6
        Egress: true
        RuleAction: allow
-       CidrBlock: !Ref SshCidr
+       CidrBlock: 0.0.0.0/0
        PortRange:
          From: 1024
          To: 65535
