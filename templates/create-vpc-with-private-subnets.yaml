@@ -59,14 +59,14 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: !Ref EnvironmentName
+          Value: !Sub ${EnvironmentName}-vpc
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: !Ref EnvironmentName
+          Value: !Sub ${EnvironmentName}-igw
 
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -83,7 +83,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
+          Value: !Sub ${EnvironmentName}-public-subnet-1
 
   PublicSubnet2:
     Type: AWS::EC2::Subnet
@@ -94,7 +94,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
+          Value: !Sub ${EnvironmentName}-public-subnet-2
 
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
@@ -105,7 +105,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet (AZ1)
+          Value: !Sub ${EnvironmentName}-private-subnet-1
 
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
@@ -116,7 +116,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
+          Value: !Sub ${EnvironmentName}-private-subnet-2
 
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
@@ -124,15 +124,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Routes
-
-  DefaultPublicRoute:
-    Type: AWS::EC2::Route
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGateway
+          Value: !Sub ${EnvironmentName}-public-rtb
 
   PublicSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -146,13 +138,21 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet2
 
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
   PrivateRouteTable1:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Routes (AZ1)
+          Value: !Sub ${EnvironmentName}-private-rtb-1
 
   PrivateSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -166,7 +166,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Routes (AZ2)
+          Value: !Sub ${EnvironmentName}-private-rtb-2
 
   PrivateSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -181,7 +181,19 @@ Resources:
          Ref: VPC
        Tags:
        - Key: Name
-         Value: !Sub ${EnvironmentName} NACL
+         Value: !Sub ${EnvironmentName}-nacl
+
+  PublicSubnet1NaclAssociation:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref NACL
+      SubnetId: !Ref PublicSubnet1
+
+  PublicSubnet2NaclAssociation:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref NACL
+      SubnetId: !Ref PublicSubnet2
 
   InboundRuleForSSH:
     Type: AWS::EC2::NetworkAclEntry
@@ -259,18 +271,6 @@ Resources:
        RuleAction: allow
        CidrBlock: 0.0.0.0/0
 
-  PublicSubnet1NaclAssociation:
-    Type: AWS::EC2::SubnetNetworkAclAssociation
-    Properties:
-      NetworkAclId: !Ref NACL
-      SubnetId: !Ref PublicSubnet1
-
-  PublicSubnet2NaclAssociation:
-    Type: AWS::EC2::SubnetNetworkAclAssociation
-    Properties:
-      NetworkAclId: !Ref NACL
-      SubnetId: !Ref PublicSubnet2
-
   InstanceSG:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -279,7 +279,7 @@ Resources:
         Ref: VPC
       Tags:
        - Key: Name
-         Value: !Sub ${EnvironmentName} Instance SG
+         Value: !Sub ${EnvironmentName}-instance-sg
 
   IngressRuleForInstanceSG:
     Type: AWS::EC2::SecurityGroupIngress
